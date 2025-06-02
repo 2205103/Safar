@@ -3,6 +3,7 @@ http://localhost:3000/booking/reserve
 POST Method
 JSON
   {
+    "User_id": "3",
     "Train_Code": "701",
     "Class_Code": "1",
     "Seat_Number": "1",
