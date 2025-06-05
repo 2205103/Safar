@@ -1,20 +1,12 @@
 const express = require('express');
 const app = express();
 
-const trainRoute=require('../routes/user.train.js');
-const routeRoute=require('../routes/user.route.js');
-const stationRoute=require('../routes/user.station.js');
+const register=require('../routes/user/user.register.js');
+const login=require('../routes/user/user.login.js');
+// const geTicket=require('../routes/user/user.geTicket.js');
 
-app.get('/',(req,res)=>{
-    res.send("Name?");
-})
-
-app.use('/train',trainRoute);
-app.use('/route',routeRoute);
-app.use('/station',stationRoute);
-
-app.use('/',(req,res)=>{
-    res.send("404");
-})
+app.use('/register',register);
+app.use('/login',login);
+// app.use('/getTicket',geTicket);
 
 module.exports=app;
