@@ -44,7 +44,7 @@ if (user_id !== User_id) {
       WHERE ticket_id = $1;
     `, [ticket_id]);
     
-    const {date,train_code,train_name} = result.rows[0];
+    const {date,train_code,train_name,from_station_name,to_station_name} = result.rows[0];
     const groupedData = {};
 
     for (const row of result.rows) {
@@ -53,8 +53,6 @@ if (user_id !== User_id) {
       if (!groupedData[key]) {
         groupedData[key] = {
           class_code: row.class_name,
-          from: row.from_station_name,
-          to: row.to_station_name,
           seats: []
         };
       }
@@ -65,6 +63,8 @@ if (user_id !== User_id) {
     res.json({
       train_code: train_code,
       train_name: train_name,
+      From : from_station_name,
+      To : to_station_name,
       Journey_date : date,
       Seat_details : Object.values(groupedData),
       total_cost : total_cost

@@ -4,17 +4,17 @@ const client = require('../../pg/database.js');
 const checkReserve = require('../../middlewares/checkReserve.js');
 
 router.post('/', checkReserve, async (req, res) => {
-  const entries = Array.isArray(req.body) ? req.body : [req.body];
+  const {User_id, Train_Code, Date, From_Station, To_Station} = req.body;
+  const entries = Array.isArray(req.body.Seat_Details) ? req.body.Seat_Details : [req.body.Seat_Details];
 
   // Basic validation for all entries
   for (const [index, entry] of entries.entries()) {
-    const { User_id, Train_Code, Class_Code, Seat_Number, Date, From_Station, To_Station } = entry;
+    const {Class_Code, Seat_Number } = entry;
     if (!User_id || !Train_Code || !Class_Code || !Seat_Number || !Date || !From_Station || !To_Station) {
-      return res.status(400).json({ error: `Missing required fields in entry at index ${index}` });
+      return res.status(400).json({ error: `Missing required fields`});
     }
   }
 
-  const User_id = entries[0].User_id;
   let ticket_id;
 
   try {
@@ -33,7 +33,7 @@ router.post('/', checkReserve, async (req, res) => {
     let total_cost = 0;
 
     for (const entry of entries) {
-      const { Train_Code, Class_Code, Seat_Number, Date, From_Station, To_Station } = entry;
+      const { Class_Code, Seat_Number} = entry;
 
       // Convert station names to IDs
       const fromStationResult = await client.query(
