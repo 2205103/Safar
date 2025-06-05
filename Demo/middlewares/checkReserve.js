@@ -8,14 +8,8 @@ const checkToken = async (req, res, next) => {
         const token = authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.jwt_secret);
         const user_id = decoded.user_id;
-        
-        if (Array.isArray(req.body)) {
-            for (const entry of req.body) {
-                entry.User_id = user_id;
-            }
-        } else {
-            req.body.User_id = user_id;
-        }
+     
+        req.body.User_id = user_id;
 
         next();
     } catch (err) {
