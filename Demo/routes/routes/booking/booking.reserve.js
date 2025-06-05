@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const client = require('../../pg/database.js');
+const checkReserve = require('../../middlewares/checkReserve.js');
 
-router.post('/', async (req, res) => {
+router.post('/', checkReserve, async (req, res) => {
   const entries = Array.isArray(req.body) ? req.body : [req.body];
 
   // Basic validation for all entries
@@ -13,7 +14,6 @@ router.post('/', async (req, res) => {
     }
   }
 
-  // Assume all entries have same User_id (if not, pick the first)
   const User_id = entries[0].User_id;
   let ticket_id;
 
@@ -30,47 +30,69 @@ router.post('/', async (req, res) => {
       [ticket_id, User_id]
     );
 
-    // Insert each seat reservation under the same ticket_id
-  let total_cost = 0;
+    let total_cost = 0;
 
-for (const entry of entries) {
-  const { Train_Code, Class_Code, Seat_Number, Date, From_Station, To_Station } = entry;
+    for (const entry of entries) {
+      const { Train_Code, Class_Code, Seat_Number, Date, From_Station, To_Station } = entry;
 
-  //Get distance
-  const distanceResult = await client.query(
-    `SELECT distance_unit FROM distance_storage WHERE (from_station = $1 AND to_station = $2) or (to_station=$1 AND from_station=$2)`,
-    [From_Station, To_Station]
-  );
-  if (distanceResult.rows.length === 0) {
-    await client.query('ROLLBACK');
-    return res.status(400).json({ error: `Distance not found between ${From_Station} and ${To_Station}` });
-  }
-  const distance = distanceResult.rows[0].distance_unit;
+      // Convert station names to IDs
+      const fromStationResult = await client.query(
+        `SELECT station_id FROM station WHERE station_name = $1`,
+        [From_Station]
+      );
+      const toStationResult = await client.query(
+        `SELECT station_id FROM station WHERE station_name = $1`,
+        [To_Station]
+      );
 
-  // Get cost per unit
-  const costResult = await client.query(
-    `SELECT cost_per_unit FROM class WHERE class_code = $1`,
-    [Class_Code]
-  );
-  if (costResult.rows.length === 0) {
-    await client.query('ROLLBACK');
-    return res.status(400).json({ error: `Cost info not found for class ${Class_Code}` });
-  }
-  const costPerUnit = costResult.rows[0].cost_per_unit;
+      if (fromStationResult.rows.length === 0 || toStationResult.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: `Invalid station name: ${From_Station} or ${To_Station}` });
+      }
 
-  total_cost += costPerUnit * distance;
+      const from_station_id = fromStationResult.rows[0].station_id;
+      const to_station_id = toStationResult.rows[0].station_id;
 
-  // Insert reservation
-  await client.query(
-    `INSERT INTO seat_reservation (ticket_id, train_code, class_code, seat_number, date, from_station, to_station)
-     VALUES ($1, $2, $3, $4, $5, $6, $7);`,
-    [ticket_id, Train_Code, Class_Code, Seat_Number, Date, From_Station, To_Station]
-  );
-}
-  await client.query(
-  `UPDATE ticket SET total_cost = $1 WHERE ticket_id = $2`,
-  [total_cost, ticket_id]
-  );
+      // Get distance
+      const distanceResult = await client.query(
+        `SELECT distance_unit FROM distance_storage WHERE 
+         (from_station = $1 AND to_station = $2) 
+         OR (from_station = $2 AND to_station = $1)`,
+        [from_station_id, to_station_id]
+      );
+
+      if (distanceResult.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: `Distance not found between ${From_Station} and ${To_Station}` });
+      }
+
+      const distance = distanceResult.rows[0].distance_unit;
+
+      // Get cost per unit
+      const costResult = await client.query(
+        `SELECT cost_per_unit FROM class WHERE class_code = $1`,
+        [Class_Code]
+      );
+      if (costResult.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: `Cost info not found for class ${Class_Code}` });
+      }
+
+      const costPerUnit = costResult.rows[0].cost_per_unit;
+      total_cost += costPerUnit * distance;
+
+      // Insert seat reservation using station IDs
+      await client.query(
+        `INSERT INTO seat_reservation (ticket_id, train_code, class_code, seat_number, date, from_station, to_station)
+         VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+        [ticket_id, Train_Code, Class_Code, Seat_Number, Date, from_station_id, to_station_id]
+      );
+    }
+
+    await client.query(
+      `UPDATE ticket SET total_cost = $1 WHERE ticket_id = $2`,
+      [total_cost, ticket_id]
+    );
 
     await client.query('COMMIT');
     return res.status(201).json({ message: 'Ticket created successfully', ticket_id });

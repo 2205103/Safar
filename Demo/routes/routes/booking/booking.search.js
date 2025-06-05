@@ -23,13 +23,13 @@ async function getUnavailableSeats(trainCode, fromStationID, toStationID,doj) {
     ) B, A
     WHERE 
       (
-        ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION) < ARRAY_POSITION(A.STATION_ORDER, $2)
-        AND ARRAY_POSITION(A.STATION_ORDER, $2) < ARRAY_POSITION(A.STATION_ORDER, B.TO_STATION)
+        ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION) <= ARRAY_POSITION(A.STATION_ORDER, $2)
+        AND ARRAY_POSITION(A.STATION_ORDER, $2) <= ARRAY_POSITION(A.STATION_ORDER, B.TO_STATION)
       )
       OR
       (
-        ARRAY_POSITION(A.STATION_ORDER, $2) < ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION)
-        AND ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION) < ARRAY_POSITION(A.STATION_ORDER, $3)
+        ARRAY_POSITION(A.STATION_ORDER, $2) <= ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION)
+        AND ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION) <= ARRAY_POSITION(A.STATION_ORDER, $3)
       );
   `;
   const { rows } = await client.query(query, [
@@ -143,6 +143,7 @@ router.post('/', async (req, res) => {
       }
 
       trainResult.push({
+        train_code: trainCode,
         train_name: trainName,
         classes: classList,
       });
