@@ -45,6 +45,7 @@ if (user_id !== User_id) {
     `, [ticket_id]);
     
     const {date,train_code,train_name,from_station_name,to_station_name} = result.rows[0];
+    const formattedDate = date.toISOString().split('T')[0];
     const groupedData = {};
 
     for (const row of result.rows) {
@@ -65,7 +66,7 @@ if (user_id !== User_id) {
       train_name: train_name,
       From : from_station_name,
       To : to_station_name,
-      Journey_date : date,
+      Journey_date : formattedDate,
       Seat_details : Object.values(groupedData),
       total_cost : total_cost
     });

@@ -138,7 +138,7 @@ router.post('/', async (req, res) => {
         classList.push({
           class_name: className,
           total_seat: totalSeats,
-          unavailable_seats: grouped[className] || [],
+          Booked_Seats: grouped[className] || [],
         });
       }
 
