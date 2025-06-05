@@ -1,17 +1,19 @@
-for user search =>
-url: http://localhost:3000/booking/search
-POST Method JSON Body: 
+http://localhost:3000/booking/search
+
+POST
 {
   "fromcity": "Dhaka",
   "tocity": "Sirajgonj",
-  "doj":"2025-05-29"
+  "doj":"2025-08-31"
 }
 
-response JSON:
+Response.json
+
 {
     "message": "Route details fetched successfully",
     "data": [
         {
+            "train_code": 775,
             "train_name": "Sirajgonj Express",
             "classes": [
                 {
@@ -68,4 +70,3 @@ response JSON:
         }
     ]
 }
-
