@@ -137,6 +137,7 @@ router.post('/', async (req, res) => {
         const totalSeats = classTotalMap[classCode] || 0;
         classList.push({
           class_name: className,
+          class_code: classCode,
           total_seat: totalSeats,
           Booked_Seats: grouped[className] || [],
         });
