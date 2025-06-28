@@ -14,15 +14,11 @@ Body =>
     [
         {
         "Class_Code": "1",
-        "Seat_Number": "2"
-        },
-        {
-        "Class_Code": "1",
-        "Seat_Number": "22"
+        "Seat_Number": [1,3,4]
         },
         {
         "Class_Code": "2",
-        "Seat_Number": "1"
+        "Seat_Number": [9,6,7]
         }
     ]
 }
