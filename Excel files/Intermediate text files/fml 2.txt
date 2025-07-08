@@ -1,0 +1,78 @@
+
+--adding seat counts
+ALTER TABLE train_class
+ADD COLUMN seat_count INTEGER;
+
+UPDATE train_class
+SET seat_count = 20
+WHERE train_id = 702 AND class_id = 1;
+
+UPDATE train_class
+SET seat_count = 20
+WHERE train_id = 702 AND class_id = 3;
+
+UPDATE train_class
+SET seat_count = 20
+WHERE train_id = 702 AND class_id = 5;
+
+UPDATE train_class
+SET seat_count = 15
+WHERE train_id = 704 AND class_id = 1;
+
+UPDATE train_class
+SET seat_count = 20
+WHERE train_id = 704 AND class_id = 2;
+
+UPDATE train_class
+SET seat_count = 25
+WHERE train_id = 704 AND class_id = 4;
+
+
+--------------- inserting into seats
+
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 702, 3, 1, generate_series(1, 20)::text;
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 702, 5, 1, generate_series(1, 20)::text;
+
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 704, 1, 1, generate_series(1, 15)::text;
+
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 704, 2, 1, generate_series(1, 20)::text;
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 704, 4, 1, generate_series(1, 25)::text;
+
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 704, 1, 2, generate_series(1, 15)::text;
+
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 704, 2, 2, generate_series(1, 20)::text;
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 704, 4, 2, generate_series(1, 25)::text;
+
+
+INSERT INTO seat (train_id, class_id, route_id, seat_number)
+SELECT 702, 1, 1, generate_series(1, 15)::text;
+
+
+-----------------------------------seat availability
+INSERT INTO seat_availability (seat_id, travel_date, station_id, available)
+SELECT seat.seat_id, '2024-02-15', route_stations.station_id, TRUE
+FROM seat
+JOIN route_stations ON seat.route_id = route_stations.route_id
+WHERE route_stations.route_id = 1;
+
+INSERT INTO seat_availability (seat_id, travel_date, station_id, available)
+SELECT seat.seat_id, '2024-02-15', route_stations.station_id, TRUE
+FROM seat
+JOIN route_stations ON seat.route_id = route_stations.route_id
+WHERE route_stations.route_id = 2;

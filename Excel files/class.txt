@@ -1,0 +1,10 @@
+INSERT INTO class (class_id, class_name) VALUES (1, '2nd General');
+INSERT INTO class (class_id, class_name) VALUES (2, '2nd Mail');
+INSERT INTO class (class_id, class_name) VALUES (3, 'Commuter');
+INSERT INTO class (class_id, class_name) VALUES (4, 'Sulav');
+INSERT INTO class (class_id, class_name) VALUES (5, 'Shovon');
+INSERT INTO class (class_id, class_name) VALUES (6, 'Shovon Chair');
+INSERT INTO class (class_id, class_name) VALUES (7, '1st Chair/ Seat');
+INSERT INTO class (class_id, class_name) VALUES (8, '1st Berth');
+INSERT INTO class (class_id, class_name) VALUES (9, 'Snigdha');
+INSERT INTO class (class_id, class_name) VALUES (10, 'AC seat');

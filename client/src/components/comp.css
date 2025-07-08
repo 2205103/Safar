@@ -1,0 +1,255 @@
+.header-title {
+  font-weight: lighter;
+  font-size: 4rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+/* SearchUser.css */
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  border-color: #0e360e;
+}
+
+.search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.search-bar {
+  width: 300px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #0e360e;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  border-width: 2px;
+}
+input {
+  padding: 10px;
+  margin-right: 5px;
+  font-size: 16px;
+  border: 1px solid #e57373;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 20px;
+  background-color: #e1f5fe;
+  color: #00008b;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+.drop-down-from {
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #aed1be;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 300px;
+  border-radius: 4px;
+  top: 25%;
+  left: 50;
+}
+
+.drop-down-to {
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #aed1be;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 300px;
+  border-radius: 4px;
+  top: 30%;
+  left: 100;
+}
+
+
+
+.drop-down-from div,
+.drop-down-to div {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #e2fcea;
+  }
+}
+
+.drop-down-from hr,
+.drop-down-to hr {
+  margin: 5px 0;
+  border: 0;
+  border-top: 1px solid #e1d5a1;
+}
+
+
+
+
+
+.link-style {
+  text-decoration: none;
+  color: #333;
+}
+
+.link-style:hover {
+  color: #ac5353;
+}
+
+.search-button:hover {
+  background-color: #206d8e;
+  /* Green background on hover */
+  color: white;
+  /* White text on hover */
+  cursor: pointer;
+  /* Add a pointer cursor on hover */
+}
+
+.hoverable:hover {
+  background-color: #f0f0f0;
+  /* Add your desired background color on hover */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 20px;
+  /* adjust as needed for spacing */
+
+}
+
+
+.input-field {
+  width: 300px;
+  margin-right: 10px;
+  padding: 8px;
+  /* adjust padding for better text field height */
+  border: 1px solid #ccc;
+  /* a light grey border */
+  border-radius: 4px;
+  /* slightly rounded corners */
+}
+
+.select-field {
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  -webkit-appearance: none;
+  /* Removes default styling of dropdown in WebKit browsers */
+  -moz-appearance: none;
+  /* Removes default styling of dropdown in Mozilla browsers */
+  appearance: none;
+  /* Removes default styling of dropdown */
+  /* You can add a background image for a custom dropdown arrow */
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.button{
+  padding: 10px 15px;
+  font-size: 18px;
+  background-color: #0e360e;
+  color: #f1f1f1;
+  cursor: pointer;
+  border: none;
+  border-radius: 100px;
+
+}
+.button:hover {
+  background-color: #1a521b;
+  /* Green background on hover */
+  color: white;
+  /* White text on hover */
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.class-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.class-card {
+  background: #fff;
+  border: 3px solid #1a521b;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  min-width: 250px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease-in-out;
+}
+
+.selected::after {
+  content: "✔"; /* Unicode character for tick sign */
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: green; /* Color of the tick sign */
+}
+.class-card:hover {
+  transform: scale(1.05);
+}
+
+.class-card div {
+  margin-bottom: 15px;
+}
+
+.class-card div:last-child {
+  margin-bottom: 0;
+}
+
+.class-card strong {
+  font-weight: bold;
+}
+
+.class-card div:first-child {
+  font-size: 16px;
+}
+
+.class-card div:not(:first-child) {
+  font-size: 14px;
+}
+
+.class-card img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.datePicker2 {
+  width: 300px; 
+  border: 3px solid #1a521b;
+  margin-right: 10px; 
+  height: 42px;
+  border-radius: 5px; 
+  
+}
+
+.react-datepicker__day--selected {
+  background-color: #1a521b; 
+}
+
+
+.react-datepicker__day--today {
+  background-color: #d9d08f; 
+}

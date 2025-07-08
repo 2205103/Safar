@@ -1,0 +1,8 @@
+INSERT INTO train (train_id, train_name) VALUES (702, 'Suborno Express');
+INSERT INTO train (train_id, train_name) VALUES (704, 'Mohanagar Express');
+INSERT INTO train (train_id, train_name) VALUES (707, 'Tista Express');
+INSERT INTO train (train_id, train_name) VALUES (709, 'Parabot Express');
+INSERT INTO train (train_id, train_name) VALUES (712, 'Upokul Express');
+INSERT INTO train (train_id, train_name) VALUES (717, 'Jayantika Express');
+INSERT INTO train (train_id, train_name) VALUES (735, 'Agnibina');
+INSERT INTO train (train_id, train_name) VALUES (737, 'Egaroshindhur probhati');

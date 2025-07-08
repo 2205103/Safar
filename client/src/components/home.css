@@ -1,0 +1,53 @@
+/* General Layout Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0 0 0 20px;
+}
+
+.header a {
+    color: white;
+    padding: 0 20px;
+    text-decoration: none;
+}
+
+.header a:hover {
+    color: #ddd;
+}
+
+.main {
+    padding: 20px;
+}
+
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #ddd;
+}
+

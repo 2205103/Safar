@@ -1,0 +1,110 @@
+.offer-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.offer-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 200px;
+}
+
+.offer-card p {
+  margin: 0;
+}
+
+.offer-card button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #206f49;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.offer-card.selected {
+  background-color: #206f49;
+  color: #fff;
+}
+
+.offer-card.selected button {
+  background-color: #fff;
+  color: #007bff;
+}
+
+.confirmButton {
+  background-color: rgb(83, 165, 83);
+}
+
+
+.confirmButton:hover {
+  background-color: rgb(101, 147, 101);
+  color: white;
+}
+
+
+.ticket-details-list {
+  list-style-type: none; /* Removes default list bullet points */
+  padding: 0; /* Removes default padding */
+  margin: 0 0 20px 0; /* Adds some margin to the bottom */
+  background-color: #f8f9fa; /* Light grey background */
+  border-radius: 8px; /* Rounded corners for the list */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.ticket-details-list li {
+  border-bottom: 1px solid #e1e1e1; /* Adds a separator between items */
+  padding: 15px; /* Adds padding inside each list item */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ticket-details-list li:last-child {
+  border-bottom: none; /* Removes the bottom border for the last item */
+}
+
+.ticket-details-list li p {
+  margin: 4px 12px 4px 0; /* Adds margin to the paragraph elements */
+  flex: 1 1 200px; /* Gives flex items a base width and allows wrapping */
+}
+
+.ticket-details-list li .btn-warning {
+  padding: 10px 20px; /* Padding inside the button */
+  background-color: #ff9800; /* Orange background */
+  color: white; /* White text */
+  border: none; /* Removes border */
+  border-radius: 4px; /* Rounded corners for the button */
+  cursor: pointer; /* Changes cursor to pointer on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.ticket-details-list li .btn-warning:hover {
+  background-color: #e68900; /* Darker orange on hover */
+}
+
+/* Style for the span used for spacing - consider using a more semantic approach */
+.ticket-details-list li span {
+  flex-grow: 1;
+}
+
+/* CSS styles for the journey information */
+.journey-info {
+  margin-bottom: 20px;
+  font-size: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.journey-info:hover {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.spacer {
+  padding: 0 20px;
+}
+
