@@ -11,14 +11,11 @@ const BookAvailableSeat = () => {
   const [date, setDate] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-
   const [totalSeat, setTotalSeat] = useState(0);
   const [unavailableSeats, setUnavailableSeats] = useState([]);
   const [availableSeatArr, setAvailableSeatArr] = useState([]);
-
   const [selectedSeats, setSelectedSeats] = useState([]);
 
-  // Map class name to class code (adjust according to your backend)
   const classCodeMap = {
     "2nd General": "1",
     "2nd Mail": "2",
@@ -53,11 +50,7 @@ const BookAvailableSeat = () => {
 
   const fetchSeatData = async (tCode, cName, journeyDate, fromStation, toStation) => {
     try {
-      const body = {
-        fromcity: fromStation,
-        tocity: toStation,
-        doj: journeyDate,
-      };
+      const body = { fromcity: fromStation, tocity: toStation, doj: journeyDate };
 
       const response = await fetch('http://localhost:5000/booking/search', {
         method: 'POST',
@@ -69,17 +62,11 @@ const BookAvailableSeat = () => {
 
       if (response.ok && data.data && data.data.length > 0) {
         const train = data.data.find(t => String(t.train_code) === String(tCode));
-        if (!train) {
-          alert('Train not found');
-          return;
-        }
-        setTrainName(train.train_name);
+        if (!train) return alert('Train not found');
 
+        setTrainName(train.train_name);
         const cls = train.classes.find(c => c.class_name === cName);
-        if (!cls) {
-          alert('Class not found');
-          return;
-        }
+        if (!cls) return alert('Class not found');
 
         setTotalSeat(cls.total_seat);
         const bookedSeats = cls.Booked_Seats || [];
@@ -125,12 +112,10 @@ const BookAvailableSeat = () => {
       Date: date,
       From_Station: from,
       To_Station: to,
-      Seat_Details: [
-        {
-          Class_Code: classCodeMap[className] || "1",
-          Seat_Number: selectedSeats,
-        },
-      ],
+      Seat_Details: [{
+        Class_Code: classCodeMap[className] || "1",
+        Seat_Number: selectedSeats,
+      }],
     };
 
     try {
@@ -157,54 +142,116 @@ const BookAvailableSeat = () => {
     }
   };
 
+  const SeatButton = ({ number }) => {
+    const isAvailable = availableSeatArr.includes(number);
+    const isSelected = selectedSeats.includes(number);
+    const label = `${className}-${number}`;
+
+    return (
+      <div
+        onClick={() => isAvailable && handleSeatToggle(number)}
+        style={{
+          padding: '15px 20px', // Increased padding for more height
+          margin: '5px',
+          borderRadius: '12px',
+          backgroundColor: isSelected ? '#28a745' : !isAvailable ? '#ccc' : '#87CEEB',
+          color: 'white',
+          textAlign: 'center',
+          cursor: isAvailable ? 'pointer' : 'not-allowed',
+          width: '90px', // Fixed width for all buttons
+          height: '50px', // Fixed height for all buttons
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 'bold',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          flexShrink: 0,
+        }}
+      >
+        {label}
+      </div>
+    );
+  };
+
+  const renderSeats = () => {
+    const seatElements = [];
+    for (let i = 0; i < totalSeat; i += 5) {
+      seatElements.push(
+        <div
+          key={i}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginBottom: '20px', // Increased margin for more vertical space
+            gap: '100px'
+          }}
+        >
+          <div style={{ display: 'flex', gap: '15px' }}>
+            {i + 1 <= totalSeat && <SeatButton number={i + 1} />}
+            {i + 2 <= totalSeat && <SeatButton number={i + 2} />}
+          </div>
+          <div style={{ display: 'flex', gap: '15px' }}>
+            {i + 3 <= totalSeat && <SeatButton number={i + 3} />}
+            {i + 4 <= totalSeat && <SeatButton number={i + 4} />}
+            {i + 5 <= totalSeat && <SeatButton number={i + 5} />}
+          </div>
+        </div>
+      );
+    }
+    return seatElements;
+  };
+
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Booking seats for {trainName} - {className}</h2>
-      <p>Date: {date}</p>
-      <p>From: {from}</p>
-      <p>To: {to}</p>
-      <p>Total Seats: {totalSeat}</p>
-      <p>Available Seats: {availableSeatArr.length}</p>
-
-      <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '600px' }}>
-        {Array.from({ length: totalSeat }, (_, i) => i + 1).map(seatNum => {
-          const isAvailable = availableSeatArr.includes(seatNum);
-          const isSelected = selectedSeats.includes(seatNum);
-
-          return (
-            <label
-              key={seatNum}
-              style={{
-                margin: '5px',
-                padding: '8px 12px',
-                border: '1px solid #444',
-                borderRadius: '4px',
-                backgroundColor: !isAvailable ? '#ddd' : isSelected ? '#6c6' : '#fff',
-                cursor: isAvailable ? 'pointer' : 'not-allowed',
-                userSelect: 'none',
-              }}
-            >
-              <input
-                type="checkbox"
-                disabled={!isAvailable}
-                checked={isSelected}
-                onChange={() => handleSeatToggle(seatNum)}
-                style={{ marginRight: '6px' }}
-              />
-              {seatNum}
-            </label>
-          );
-        })}
+    <div style={{ padding: '30px', maxWidth: '900px', margin: '0 auto' }}>
+      <h2 style={{ color: '#333', marginBottom: '20px' }}>Booking seats for {trainName} - {className}</h2>
+      <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+        <p><strong>Date:</strong> {date}</p>
+        <p><strong>From:</strong> {from} | <strong>To:</strong> {to}</p>
+        <p><strong>Total Seats:</strong> {totalSeat} | <strong>Available Seats:</strong> {availableSeatArr.length}</p>
       </div>
 
-      <p style={{ marginTop: '20px' }}>
-        Selected Seats: {selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None'}
-      </p>
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '25px', // Increased padding
+        borderRadius: '10px', 
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        marginBottom: '20px'
+      }}>
+        <h3 style={{ marginBottom: '20px', color: '#555' }}>Select Your Seats</h3>
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          {renderSeats()}
+        </div>
+      </div>
+
+      <div style={{ 
+        backgroundColor: '#f8f9fa', 
+        padding: '15px', 
+        borderRadius: '8px',
+        marginBottom: '20px'
+      }}>
+        <p style={{ fontWeight: 'bold' }}>
+          Selected Seats: {selectedSeats.length > 0 ? selectedSeats.map(s => `${className}-${s}`).join(', ') : 'None'}
+        </p>
+      </div>
 
       <button
         onClick={handleBooking}
         disabled={selectedSeats.length === 0}
-        style={{ marginTop: '10px', padding: '10px 20px', fontSize: '16px' }}
+        style={{
+          marginTop: '15px',
+          padding: '12px 30px',
+          fontSize: '16px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          transition: 'background-color 0.3s',
+          width: '100%',
+          maxWidth: '200px'
+        }}
+        onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
+        onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
       >
         Book Now
       </button>
