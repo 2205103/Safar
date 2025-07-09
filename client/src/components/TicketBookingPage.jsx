@@ -28,11 +28,9 @@ const TicketBookingPage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [transactionId, setTransactionId] = useState('');
 
-  // Cancel modal and success state for manual cancel
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelSuccess, setCancelSuccess] = useState('');
 
-  // Timer state (in seconds)
   const [timeLeft, setTimeLeft] = useState(30);
   const timerRef = useRef(null);
 
@@ -49,7 +47,6 @@ const TicketBookingPage = () => {
 
       try {
         const token = localStorage.getItem('token');
-
         const response = await fetch('http://localhost:5000/booking/getTicket', {
           method: 'POST',
           headers: {
@@ -76,11 +73,8 @@ const TicketBookingPage = () => {
     fetchTicketDetails();
   }, [ticketId]);
 
-  // 🔥 Timer countdown effect
   useEffect(() => {
-    // Only run timer if ticketData is loaded and no modal is open (so user can confirm payment)
-    if (!ticketData) return;
-    if (modalIsOpen) return; // pause countdown when payment modal is open
+    if (!ticketData || modalIsOpen) return;
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
@@ -89,7 +83,6 @@ const TicketBookingPage = () => {
     return () => clearInterval(timerRef.current);
   }, [ticketData, modalIsOpen]);
 
-  // 🔥 Auto cancel when timeLeft reaches 0
   useEffect(() => {
     if (timeLeft <= 0) {
       clearInterval(timerRef.current);
@@ -97,7 +90,6 @@ const TicketBookingPage = () => {
     }
   }, [timeLeft]);
 
-  // 🔥 Auto cancel ticket function - no modal, direct cancel & redirect
   const autoCancelTicket = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -116,10 +108,10 @@ const TicketBookingPage = () => {
       }
 
       alert('Time expired! Ticket was automatically canceled.');
-      navigate('/'); // redirect to home page
+      navigate('/');
     } catch (err) {
       alert(`Error auto-canceling ticket: ${err.message}`);
-      navigate('/'); // still redirect home even on error
+      navigate('/');
     }
   };
 
@@ -141,15 +133,13 @@ const TicketBookingPage = () => {
       return;
     }
 
-    // Stop timer on payment confirm
     clearInterval(timerRef.current);
 
     alert(`Payment confirmed!\nPayment method: ${paymentMethod}\nTransaction ID: ${transactionId}`);
     closeModal();
-    // You can also navigate or do other actions here
+    navigate('/'); // 🔥 Redirect after confirmation
   };
 
-  // Manual cancel ticket function (via modal)
   const handleCancelTicket = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -178,12 +168,13 @@ const TicketBookingPage = () => {
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
   if (!ticketData) return null;
 
-  const journeyDateOnly = ticketData.Journey_date; // Already formatted string from backend
+  const journeyDateOnly = ticketData.Journey_date;
 
-  // Format timer display mm:ss
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
-  const formattedTimer = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  const formattedTimer = `${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}`;
 
   return (
     <div style={{ padding: 20 }}>
@@ -204,7 +195,6 @@ const TicketBookingPage = () => {
         <p>Total Cost: {ticketData.total_cost} tk</p>
       </div>
 
-      {/* 🔥 Timer display */}
       <p style={{ fontWeight: 'bold', fontSize: '18px', color: timeLeft <= 30 ? 'red' : 'black' }}>
         Time left to confirm payment: {formattedTimer}
       </p>
@@ -262,7 +252,6 @@ const TicketBookingPage = () => {
           Confirm Payment
         </button>
 
-        {/* Manual Cancel Button */}
         <button
           onClick={() => setCancelModalOpen(true)}
           style={{
@@ -320,7 +309,7 @@ const TicketBookingPage = () => {
         </button>
       </Modal>
 
-      {/* Cancel Confirmation Modal */}
+      {/* Cancel Modal */}
       <Modal
         isOpen={cancelModalOpen}
         onRequestClose={() => setCancelModalOpen(false)}
