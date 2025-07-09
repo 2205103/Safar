@@ -151,21 +151,18 @@ const BookAvailableSeat = () => {
       <div
         onClick={() => isAvailable && handleSeatToggle(number)}
         style={{
-          padding: '15px 20px', // Increased padding for more height
+          padding: '12px 8px',
           margin: '5px',
-          borderRadius: '12px',
+          borderRadius: '8px',
           backgroundColor: isSelected ? '#28a745' : !isAvailable ? '#ccc' : '#87CEEB',
           color: 'white',
           textAlign: 'center',
           cursor: isAvailable ? 'pointer' : 'not-allowed',
-          width: '90px', // Fixed width for all buttons
-          height: '50px', // Fixed height for all buttons
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          width: '80px',
+          boxSizing: 'border-box',
           fontWeight: 'bold',
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          flexShrink: 0,
+          fontSize: '14px'
         }}
       >
         {label}
@@ -174,23 +171,27 @@ const BookAvailableSeat = () => {
   };
 
   const renderSeats = () => {
-    const seatElements = [];
+    const seatRows = [];
+    
     for (let i = 0; i < totalSeat; i += 5) {
-      seatElements.push(
-        <div
+      seatRows.push(
+        <div 
           key={i}
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            marginBottom: '20px', // Increased margin for more vertical space
-            gap: '100px'
+            marginBottom: '15px',
+            alignItems: 'flex-start'
           }}
         >
-          <div style={{ display: 'flex', gap: '15px' }}>
+          {/* Left group - 2 seats */}
+          <div style={{ display: 'flex', gap: '10px' }}>
             {i + 1 <= totalSeat && <SeatButton number={i + 1} />}
             {i + 2 <= totalSeat && <SeatButton number={i + 2} />}
           </div>
-          <div style={{ display: 'flex', gap: '15px' }}>
+          
+          {/* Right group - 3 seats with large gap */}
+          <div style={{ display: 'flex', gap: '10px', marginLeft: '80px' }}>
             {i + 3 <= totalSeat && <SeatButton number={i + 3} />}
             {i + 4 <= totalSeat && <SeatButton number={i + 4} />}
             {i + 5 <= totalSeat && <SeatButton number={i + 5} />}
@@ -198,7 +199,8 @@ const BookAvailableSeat = () => {
         </div>
       );
     }
-    return seatElements;
+
+    return seatRows;
   };
 
   return (
@@ -212,13 +214,13 @@ const BookAvailableSeat = () => {
 
       <div style={{ 
         backgroundColor: 'white', 
-        padding: '25px', // Increased padding
+        padding: '20px', 
         borderRadius: '10px', 
         boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
         marginBottom: '20px'
       }}>
-        <h3 style={{ marginBottom: '20px', color: '#555' }}>Select Your Seats</h3>
-        <div style={{ width: '100%', overflowX: 'auto' }}>
+        <h3 style={{ marginBottom: '15px', color: '#555' }}>Select Your Seats</h3>
+        <div style={{ width: '100%' }}>
           {renderSeats()}
         </div>
       </div>
