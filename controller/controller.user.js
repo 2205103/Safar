@@ -6,6 +6,7 @@ const login=require('../routes/user/user.login.js');
 const userInfo=require('../routes/user/user.info.js');
 const deleteAccount=require('../routes/user/user.deleteAccount.js');
 const updatePassword=require('../routes/user/user.updatePassword.js');
+const printTicket=require('../routes/user/user.printTicket.js');
 // const geTicket=require('../routes/user/user.geTicket.js');
 
 
@@ -14,6 +15,7 @@ app.use('/info/update',updatePassword);
 app.use('/register',register);
 app.use('/login',login);
 app.use('/info',userInfo);
+app.use('/printTicket',printTicket);
 // app.use('/getTicket',geTicket);
 
 module.exports=app;

@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const {client} = require('../../pg/database.js');
 const checkToken = require('../../middlewares/checkToken.js');
+const checkDoubleTicket = require('../../middlewares/checkDoubleTicket.js');
 
-router.post('/', checkToken, async (req, res) => {
+router.post('/', checkToken, checkDoubleTicket, async (req, res) => {
   const { User_id, Train_Code, Date, From_Station, To_Station } = req.body;
 
   // Normalize seat details array

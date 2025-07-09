@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const {client} = require('../../pg/database.js');
 const bcrypt = require("bcrypt");
+const checkUserName = require('../../middlewares/checkUserName.js');
 
 
-router.post('/', async (req, res) => {
+router.post('/', checkUserName, async (req, res) => {
     const { name, phone_number, username, password } = req.body;
 
     const hashedPass = await bcrypt.hash(password, 10);

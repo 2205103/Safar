@@ -62,3 +62,26 @@ CREATE TRIGGER trg_handle_ticket_delete
 AFTER DELETE ON ticket
 FOR EACH ROW
 EXECUTE FUNCTION handle_ticket_delete();
+
+
+-- Step 1: Drop the existing trigger
+DROP TRIGGER IF EXISTS trg_handle_ticket_delete ON ticket;
+
+-- Step 2: Drop the existing trigger function
+DROP FUNCTION IF EXISTS handle_ticket_delete();
+
+-- Step 3: Recreate the function WITHOUT refund_history insert
+CREATE OR REPLACE FUNCTION handle_ticket_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Only delete from payment_history, no refund insertion
+  DELETE FROM payment_history WHERE payment_id = OLD.ticket_id;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 4: Recreate the trigger
+CREATE TRIGGER trg_handle_ticket_delete
+AFTER DELETE ON ticket
+FOR EACH ROW
+EXECUTE FUNCTION handle_ticket_delete();
