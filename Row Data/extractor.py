@@ -27,9 +27,9 @@ def generate_insert_statement():
                 val = row[col]
                 # Escape single quotes by doubling them for SQL
                 val = val.replace("'", "''")
-                # Wrap with single quotes, or use NULL if empty
+                # Wrap with single quotes, or use '00:00' if empty
                 if val == '':
-                    values.append("NULL")
+                    values.append("'00:00'")
                 else:
                     values.append(f"'{val}'")
             rows.append(f"({', '.join(values)})")
