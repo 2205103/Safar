@@ -33,12 +33,16 @@ router.post('/', async (req, res) => {
       });
     }
 
+  const response = {};
+
+  for(var i=0;i<2;i++)
+  {
     const {
       train_code,
       route_name,
       train_name: dbTrainName,
       order_of_stations
-    } = trainInfoResult.rows[0];
+    } = trainInfoResult.rows[i];
 
     // Parse order_of_stations string into an array of integers
     let stationsArray;
@@ -77,19 +81,30 @@ router.post('/', async (req, res) => {
         duration: calculateDuration(from.departure_time, to.arrival_time)
       });
     }
-
-    const response = {
-      success: true,
-      data: {
+    if(i==0)
+    {
+      response["UP"] =
+      {
         route_name,
         train_code,
         train_name: dbTrainName,
         timetable: timetablePairs
-      }
-    };
-
-    res.json(response);
-  } catch (err) {
+      };
+    }
+    else
+    {
+      response["DOWN"] =
+      {
+        route_name,
+        train_code,
+        train_name: dbTrainName,
+        timetable: timetablePairs
+      };
+    }
+  }
+  res.json(response);
+} 
+  catch (err) {
     console.error('Error fetching timetable:', err);
     res.status(500).json({ 
       success: false,
@@ -122,3 +137,5 @@ function calculateDuration(departure, arrival) {
 }
 
 module.exports = router;
+
+//sami
