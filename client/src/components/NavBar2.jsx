@@ -54,7 +54,7 @@ const NavBar2 = () => {
     return (
         <nav>
             <div className="nav-logo-container">
-                <img src={"/siren_home.png"} alt="" />
+                <img src={"/siren_logo.png"} alt="" />
             </div>
             <div className="navbar-links-container">
                 <a href="">Home</a>

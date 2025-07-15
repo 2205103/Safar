@@ -16,6 +16,17 @@ const customStyles = {
   },
 };
 
+// ✅ Helper to compare dates ignoring time
+const isFutureDate = (inputDate) => {
+  const today = new Date();
+  const journey = new Date(inputDate);
+
+  today.setHours(0, 0, 0, 0);
+  journey.setHours(0, 0, 0, 0);
+
+  return journey > today;
+};
+
 const ShowUser = () => {
   const navigate = useNavigate();
   const { loginState, userId, setUserId, name, setName, setLoginState } = useData();
@@ -191,7 +202,6 @@ const ShowUser = () => {
     }
   };
 
-  // Updated function to cancel ticket by ticket_id
   const handleCancelTicketForDate = async (ticketId) => {
     if (!window.confirm(`Are you sure you want to cancel this ticket?`)) {
       return;
@@ -201,7 +211,7 @@ const ShowUser = () => {
       const token = localStorage.getItem('token');
 
       const response = await fetch('http://localhost:5000/booking/cancelTicket', {
-        method: 'POST', // or 'DELETE' if your API uses that
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -216,7 +226,6 @@ const ShowUser = () => {
 
       alert('Ticket canceled successfully.');
 
-      // Refresh tickets after cancellation
       setLoadingTickets(true);
       const res = await fetch(`http://localhost:5000/user/printTicket/${id}`);
       const json = await res.json();
@@ -283,32 +292,34 @@ const ShowUser = () => {
               >
                 <h5>
                   Journey Date: {new Date(date).toLocaleDateString()}
-                  <button
-                    style={{
-                      marginLeft: '20px',
-                      padding: '5px 10px',
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      float: 'right',
-                      position: 'absolute',
-                      right: '15px',
-                      top: '15px',
-                    }}
-                    onClick={() => {
-                      const ticketId = groupedSeats[date][0]?.ticket_id;
-                      if (!ticketId) {
-                        alert("Ticket ID not found for this date.");
-                        return;
-                      }
-                      handleCancelTicketForDate(ticketId);
-                    }}
-                  >
-                    Cancel Ticket
-                  </button>
+                  {isFutureDate(date) && (
+                    <button
+                      style={{
+                        marginLeft: '20px',
+                        padding: '5px 10px',
+                        backgroundColor: 'red',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        float: 'right',
+                        position: 'absolute',
+                        right: '15px',
+                        top: '15px',
+                      }}
+                      onClick={() => {
+                        const ticketId = groupedSeats[date][0]?.ticket_id;
+                        if (!ticketId) {
+                          alert("Ticket ID not found for this date.");
+                          return;
+                        }
+                        handleCancelTicketForDate(ticketId);
+                      }}
+                    >
+                      Cancel Ticket
+                    </button>
+                  )}
                 </h5>
 
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>

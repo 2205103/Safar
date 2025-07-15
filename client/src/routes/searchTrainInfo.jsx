@@ -11,4 +11,4 @@ const searchTrainInfo = () => {
   )
 }
 
-export default searchTrainInfo
+export default searchTrainInfo;

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { useData } from './AppContext';
@@ -10,13 +10,25 @@ const SearchTravel = () => {
 
   const [inputValueFrom, setInputValueFrom] = useState('');
   const [inputValueTo, setInputValueTo] = useState('');
+  const [stationOptions, setStationOptions] = useState([]);
   const [dateSearched, setDate] = useState(null);
-
   const [trains, setTrains] = useState([]);
   const [searchClicked, setSearchClicked] = useState(false);
 
-  const onChangeFrom = (e) => setInputValueFrom(e.target.value);
-  const onChangeTo = (e) => setInputValueTo(e.target.value);
+  useEffect(() => {
+    const stored = localStorage.getItem('stationNames');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setStationOptions(parsed);
+
+        }
+      } catch (e) {
+        console.error('Error parsing stationNames from localStorage:', e);
+      }
+    }
+  }, []);
 
   const formatDate = (date) => {
     if (!date) return '';
@@ -47,9 +59,7 @@ const SearchTravel = () => {
 
       const response = await fetch('http://localhost:5000/booking/search', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
 
@@ -73,24 +83,44 @@ const SearchTravel = () => {
       <div style={{ marginTop: '40px' }}>
         <div className="input-container">
           <label htmlFor="from" className="label">From: </label>
-          <input
-            type="text"
+          <select
             id="from"
-            onChange={onChangeFrom}
             value={inputValueFrom}
-            style={{ width: '300px', marginRight: '10px', height: '40px', borderRadius: '5px', border: '2px solid darkgreen' }}
-          />
+            onChange={(e) => setInputValueFrom(e.target.value)}
+            style={{
+              width: '300px',
+              marginRight: '10px',
+              height: '40px',
+              borderRadius: '5px',
+              border: '2px solid darkgreen',
+            }}
+          >
+            <option value="">-- Select From Station --</option>
+            {stationOptions.map((station, idx) => (
+              <option key={idx} value={station}>{station}</option>
+            ))}
+          </select>
         </div>
 
         <div className="input-container">
           <label htmlFor="to" className="label">To: </label>
-          <input
-            type="text"
+          <select
             id="to"
-            onChange={onChangeTo}
             value={inputValueTo}
-            style={{ width: '300px', marginRight: '10px', height: '40px', borderRadius: '5px', border: '2px solid darkgreen' }}
-          />
+            onChange={(e) => setInputValueTo(e.target.value)}
+            style={{
+              width: '300px',
+              marginRight: '10px',
+              height: '40px',
+              borderRadius: '5px',
+              border: '2px solid darkgreen',
+            }}
+          >
+            <option value="">-- Select To Station --</option>
+            {stationOptions.map((station, idx) => (
+              <option key={idx} value={station}>{station}</option>
+            ))}
+          </select>
         </div>
 
         <div className="input-container">
@@ -100,14 +130,16 @@ const SearchTravel = () => {
             placeholderText="Date of Journey"
             showIcon
             selected={dateSearched}
-            onChange={(date) => setDate(date)}
+            onChange={setDate}
             dateFormat="yyyy-MM-dd"
             minDate={new Date()}
             maxDate={new Date(new Date().setDate(new Date().getDate() + 9))}
           />
         </div>
 
-        <button onClick={onSearchFunc} className="button">Search</button>
+        <button onClick={onSearchFunc} className="button" style={{ width: '200px' }}>
+          Search
+        </button>
 
         {searchClicked && trains.length === 0 && (
           <div className="not found mt-5">
@@ -118,10 +150,13 @@ const SearchTravel = () => {
 
       <div className="train-container mt-5">
         {trains.map((train, idx) => (
-          <div key={idx} className="train-card" style={{ marginBottom: '30px', border: '1px solid gray', padding: '15px' }}>
+          <div
+            key={idx}
+            className="train-card"
+            style={{ marginBottom: '30px', border: '1px solid gray', padding: '15px' }}
+          >
             <h4>{train.train_code} - {train.train_name}</h4>
 
-            {/* Responsive class cards */}
             <div
               style={{
                 display: 'grid',
