@@ -14,7 +14,7 @@ router.post('/', checkToken, async (req, res) => {
     const result = await client.query(
       `DELETE
       FROM ticket
-      WHERE (SEAT_RESERVA) ticket_id = $1`, [ticket_id]
+      WHERE ticket_id = $1`, [ticket_id]
     );
 
     if (result.rowCount === 0) {
