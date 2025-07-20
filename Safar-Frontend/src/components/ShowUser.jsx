@@ -5,6 +5,38 @@ import Modal from 'react-modal';
 import ErrorModal from './ErrorModal';
 import './showuserpg.css';
 
+// Add this helper function somewhere in your component file
+const formatTimeRemaining = (timeString) => {
+  if (!timeString) return 'N/A';
+  
+  // Handle negative time (already passed)
+  if (timeString.startsWith('-')) {
+    return 'Journey Completed';
+  }
+
+  // Handle positive time remaining
+  try {
+    const parts = timeString.split(':');
+    if (parts.length >= 3) {
+      const hours = Math.abs(parseInt(parts[0]));
+      const minutes = Math.abs(parseInt(parts[1]));
+      const seconds = Math.abs(parseFloat(parts[2]));
+
+      if (hours > 0) {
+        return `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+      }
+      if (minutes > 0) {
+        return `${minutes} minute${minutes !== 1 ? 's' : ''} ${Math.round(seconds)} second${Math.round(seconds) !== 1 ? 's' : ''}`;
+      }
+      return `${Math.round(seconds)} second${Math.round(seconds) !== 1 ? 's' : ''}`;
+    }
+    return timeString; // fallback to original string if format is unexpected
+  } catch (e) {
+    console.error('Error formatting time:', e);
+    return timeString; // fallback to original string if error occurs
+  }
+};
+
 // Modal styles
 const customStyles = {
   content: {
@@ -29,12 +61,40 @@ const customStyles = {
   }
 };
 
-const isFutureDate = (inputDate) => {
-  const today = new Date();
-  const journey = new Date(inputDate);
-  today.setHours(0, 0, 0, 0);
-  journey.setHours(0, 0, 0, 0);
-  return journey > today;
+
+// Updated shouldShowCancelButton function
+const shouldShowCancelButton = (timeRemaining) => {
+  if (timeRemaining === undefined || timeRemaining === null) {
+    return false;
+  }
+
+  // If it's already a number (hours remaining)
+  if (typeof timeRemaining === 'number') {
+    return timeRemaining >= 6; // 6 or more hours remaining
+  }
+
+  // Handle string format if needed
+  if (typeof timeRemaining === 'string') {
+    // Check if time is negative (already passed)
+    if (timeRemaining.startsWith('-')) {
+      return false;
+    }
+
+    try {
+      // Format: "06:01:17.192553" (HH:MM:SS.microseconds)
+      const timeParts = timeRemaining.split(':');
+      if (timeParts.length < 2) return false;
+
+      const hours = parseInt(timeParts[0]) || 0;
+      const minutes = parseInt(timeParts[1]) || 0;
+      return (hours * 60 + minutes) >= 360; // 6 hours in minutes
+    } catch (e) {
+      console.error('Error parsing time remaining:', e);
+      return false;
+    }
+  }
+
+  return false;
 };
 
 const ShowUser = () => {
@@ -73,7 +133,7 @@ const ShowUser = () => {
 
   useEffect(() => {
     if (!loginState || userId === null || userId.toString() !== id) {
-      navigate(`/`);
+      navigate('/');
       return;
     }
 
@@ -518,33 +578,50 @@ const ShowUser = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center'
                   }}>
-                    <span>Journey Date: {new Date(date).toLocaleDateString()}</span>
-                    {isFutureDate(date) && (
-                      <button
-                        style={{
-                          padding: '0.5rem 1rem',
-                          background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          fontWeight: '600',
-                          fontSize: '0.9rem',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onClick={() => {
-                          const ticketId = groupedSeats[date][0]?.ticket_id;
-                          if (!ticketId) {
-                            setErrMessage("Ticket ID not found for this date.");
-                            setErrorModalIsOpen(true);
-                            return;
-                          }
-                          openCancelConfirm(ticketId, date);
-                        }}
-                      >
-                        Cancel Ticket
-                      </button>
-                    )}
+<span>
+  {groupedSeats[date]?.[0] && (
+    <>
+      Journey Date: {new Date(date).toLocaleDateString()}
+      {groupedSeats[date][0].arrival_time &&
+        ` | Arrival Time: ${groupedSeats[date][0].arrival_time.substring(0, 8)}`}
+      {groupedSeats[date][0].total_cost !== undefined &&
+        ` | Total Cost: ৳${groupedSeats[date][0].total_cost}`}
+      {groupedSeats[date][0].time_remaining !== undefined &&
+        ` | Status: ${
+          groupedSeats[date][0].time_remaining.startsWith('-')
+            ? 'Journey Completed'
+            : `Departs in ${formatTimeRemaining(groupedSeats[date][0].time_remaining)}`
+        }`}
+    </>
+  )}
+</span>
+
+{shouldShowCancelButton(groupedSeats[date][0]?.time_remaining) && (
+  <button
+    style={{
+      padding: '0.5rem 1rem',
+      background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)',
+      color: 'white',
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontWeight: '600',
+      fontSize: '0.9rem',
+      transition: 'all 0.3s ease'
+    }}
+    onClick={() => {
+      const ticketId = groupedSeats[date][0]?.ticket_id;
+      if (!ticketId) {
+        setErrMessage("Ticket ID not found for this date.");
+        setErrorModalIsOpen(true);
+        return;
+      }
+      openCancelConfirm(ticketId, date);
+    }}
+  >
+    Cancel Ticket
+  </button>
+)}
                   </h5>
 
                   <div style={{ overflowX: 'auto' }}>
@@ -994,13 +1071,15 @@ const ShowUser = () => {
             Your ticket has been canceled successfully.
           </p>
           <p style={{ 
-            fontSize: '1.25rem',
-            fontWeight: '600',
-            color: '#333',
-            marginBottom: '1.5rem'
-          }}>
-            Refund Amount: <span style={{ color: '#28a745' }}>৳{refundAmount.toFixed(2)}</span>
-          </p>
+  fontSize: '1.25rem',
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: '1.5rem'
+}}>
+  Refund Amount: <span style={{ color: '#28a745' }}>
+    ৳{(refundAmount || 0).toFixed(2)}
+  </span>
+</p>
           <p style={{ 
             color: '#6c757d',
             fontStyle: 'italic',
