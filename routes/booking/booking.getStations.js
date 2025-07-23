@@ -8,7 +8,6 @@ router.get('/', async (req, res) => {
 
     if (result.rows.length > 0) {
       const stationNames = result.rows.map(row => row.station_name);
-      console.log('Fetched station names:', stationNames);
       res.json({ stationNames: stationNames }); // send names as array of strings
     } else {
       res.status(404).json({ error: 'No stations found' });
