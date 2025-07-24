@@ -20,7 +20,7 @@ const checkDoubleTicket = async (req, res, next) => {
     const result = await pool.query(query, values);
 
     if (result.rowCount > 0) {
-      return res.status(400).json({ error: "User already has a ticket for this date." });
+      return res.status(413).json({ error: "User already has a ticket for this date." });
     }
 
     next();
