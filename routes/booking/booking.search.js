@@ -1,46 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const {client,getUnavailableSeats} = require('../../pg/database.js');
-//const {client} = require('../../pg/database.js');
+const {client, getUnavailableSeats} = require('../../pg/database.js');
 
 function comesBefore(str, first, second) {
   const arr = str.trim().split(' ');
   return arr.indexOf(first.toString()) < arr.indexOf(second.toString());
 }
-
-// async function getUnavailableSeats(trainCode, fromStationID, toStationID,doj) {
-//   const query = `
-//     WITH A AS (
-//       SELECT STRING_TO_ARRAY(R.ORDER_OF_STATIONS, ' ') AS STATION_ORDER
-//       FROM TRAIN T
-//       JOIN ROUTE R ON T.ROUTE_ID = R.ROUTE_ID
-//       WHERE T.TRAIN_CODE = $1
-//     )
-//     SELECT B.CLASS_CODE, B.SEAT_NUMBER
-//     FROM (
-//       SELECT CLASS_CODE, SEAT_NUMBER, FROM_STATION, TO_STATION
-//       FROM SEAT_RESERVATION
-//       WHERE TRAIN_CODE = $1 AND DATE=$4
-//     ) B, A
-//     WHERE 
-//       (
-//         ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION) <= ARRAY_POSITION(A.STATION_ORDER, $2)
-//         AND ARRAY_POSITION(A.STATION_ORDER, $2) <= ARRAY_POSITION(A.STATION_ORDER, B.TO_STATION)
-//       )
-//       OR
-//       (
-//         ARRAY_POSITION(A.STATION_ORDER, $2) <= ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION)
-//         AND ARRAY_POSITION(A.STATION_ORDER, B.FROM_STATION) <= ARRAY_POSITION(A.STATION_ORDER, $3)
-//       );
-//   `;
-//   const { rows } = await client.query(query, [
-//     trainCode,
-//     String(fromStationID),
-//     String(toStationID),
-//     String(doj)
-//   ]);
-//   return rows;
-// }
 
 router.post('/', async (req, res) => {
   const { fromcity, tocity, doj } = req.body;
@@ -50,7 +15,7 @@ router.post('/', async (req, res) => {
 
   try {
     const stationRes = await client.query(
-      `SELECT station_id, station_name FROM station WHERE station_name = $1 OR station_name = $2;`, //GETTING THE STATION_ID
+      `SELECT station_id, station_name FROM station WHERE station_name = $1 OR station_name = $2;`,
       [fromcity, tocity]
     );
     if (stationRes.rows.length < 2) {
@@ -62,7 +27,7 @@ router.post('/', async (req, res) => {
     const fromStationId = stationMap[fromcity];
     const toStationId = stationMap[tocity];
 
-    const routesResult = await client.query( //ALL POSSIBLE ROOT OF THE INTERSECTION OF THE STATION_ID'S
+    const routesResult = await client.query(
       `
       SELECT R1.route_id
       FROM route_station R1
@@ -88,7 +53,7 @@ router.post('/', async (req, res) => {
 
     const filteredRoutes = possibleRoutes.filter(route =>
       comesBefore(route.station_sequence, fromStationId, toStationId)
-    ); //CHECKER FUNCTION OF (DHAKA-CHATTOGRAM NAKI CHATTOGRAM-DHAKA)
+    );
 
     const allTrains = [];
     for (const route of filteredRoutes) {
@@ -102,21 +67,20 @@ router.post('/', async (req, res) => {
     const trainResult = [];
 
     for (const train of allTrains) {
-
-
-    const classRes = await client.query( //AVAILABLE CLASS PER TRAIN; AVAILABLE SEAT PER CLASS OF EACH TRAIN
+      const classRes = await client.query(
         `SELECT A.CLASS_CODE, B.CLASS_NAME, A.TOTAL_SEAT
         FROM SEAT A JOIN CLASS B ON (A.CLASS_CODE = B.CLASS_CODE)
-        WHERE A.TRAIN_CODE = $1;`,[train.train_code]
-    );
+        WHERE A.TRAIN_CODE = $1;`,
+        [train.train_code]
+      );
 
-    const classMap = {};
-    const classTotalMap = {};
-    classRes.rows.forEach(r => {
-                    classMap[r.class_code] = r.class_name;
-                    classTotalMap[r.class_code] = r.total_seat;
-                  });
-    const allClassCodes = Object.keys(classMap);
+      const classMap = {};
+      const classTotalMap = {};
+      classRes.rows.forEach(r => {
+        classMap[r.class_code] = r.class_name;
+        classTotalMap[r.class_code] = r.total_seat;
+      });
+      const allClassCodes = Object.keys(classMap);
 
       const trainCode = train.train_code;
       const trainName = train.name;
@@ -128,7 +92,7 @@ router.post('/', async (req, res) => {
         doj
       );
 
-      const grouped = {}; //UNAVAILABLE SEAT COUNT
+      const grouped = {};
       for (const row of unavailableSeats) {
         const className = classMap[row.class_code] || row.class_code;
         if (!grouped[className]) grouped[className] = [];
@@ -141,10 +105,35 @@ router.post('/', async (req, res) => {
         const totalSeats = classTotalMap[classCode] || 0;
         classList.push({
           class_name: className,
-          class_code:classCode,
+          class_code: classCode,
           total_seat: totalSeats,
           Booked_Seats: grouped[className] || [],
         });
+      }
+
+      // Add cost calculation for each class
+      for (const cls of classList) {
+        const costResult = await client.query(
+          `SELECT 
+            c.cost_per_unit,
+            ds.distance_unit,
+            ROUND(c.cost_per_unit * ds.distance_unit, 2) AS seat_cost
+           FROM 
+            class c
+           CROSS JOIN 
+            (SELECT distance_unit 
+             FROM distance_storage 
+             WHERE (from_station = $1 AND to_station = $2)
+                OR (from_station = $2 AND to_station = $1)
+             LIMIT 1) ds
+           WHERE 
+            c.class_code = $3`,
+          [fromStationId, toStationId, cls.class_code]
+        );
+
+        if (costResult.rows.length > 0) {
+          cls.seat_cost = costResult.rows[0].seat_cost;
+        }
       }
 
       trainResult.push({
@@ -153,7 +142,7 @@ router.post('/', async (req, res) => {
         classes: classList,
       });
     }
-
+    
     res.json({
       message: 'Route details fetched successfully',
       data: trainResult,
