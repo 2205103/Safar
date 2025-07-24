@@ -1,0 +1,182 @@
+/* General Layout Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.header-container {
+    background-color: rgba(0, 0, 0, 0.3); /* Slightly transparent dark background */
+    color: white;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    margin: 0 0 0 20px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #e0e0e0; /* Slightly off-white */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.header a {
+    color: white;
+    padding: 0 20px;
+    text-decoration: none;
+}
+
+.header a:hover {
+    color: #ddd;
+}
+
+.main {
+    padding: 20px;
+}
+
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #ddd;
+}
+
+/* Homepage Styles */
+.homepage {
+    display: flex;
+    flex-direction: column;
+    width: 100vw; /* Full width of viewport */
+    height: 100vh; /* Full height of viewport */
+    display: flex; /* Ensures content is centered */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    position: relative;
+}
+
+
+
+/* Additional Styles for Homepage Content */
+.homepage h1 {
+    color: white; /* White text on dark background */
+    font-size: 2rem; /* Adjust font size */
+    text-align: center; /* Center the text */
+}
+
+
+.homepage-content {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.homepage-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.homepage-content p {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: #eee;
+}
+
+.homepage-content button {
+    background-color: #ff64c8;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.homepage-content button:hover {
+    background-color: #ff84d8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header h1 {
+        margin-bottom: 10px;
+    }
+
+    .header a {
+        padding: 10px 20px;
+    }
+
+    .main {
+        padding: 10px;
+    }
+
+    .homepage-content {
+        padding: 15px;
+    }
+
+    .homepage-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .homepage-content p {
+        font-size: 1rem;
+    }
+
+    .homepage-content button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.2rem;
+    }
+
+    .header a {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .homepage-content {
+        padding: 10px;
+    }
+
+    .homepage-content h1 {
+        font-size: 1.2rem;
+    }
+
+    .homepage-content p {
+        font-size: 0.9rem;
+    }
+
+    .homepage-content button {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
