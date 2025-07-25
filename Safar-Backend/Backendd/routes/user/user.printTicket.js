@@ -38,7 +38,7 @@ router.get('/:user_id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'No records found.' });
     }
-
+    console.log('time remaining:', result.rows[0].seat_reservations.map(sr => sr.time_remaining));
     res.json({ success: true, data: result.rows[0] });
   } catch (err) {
     console.error('Ticket history error:', err);

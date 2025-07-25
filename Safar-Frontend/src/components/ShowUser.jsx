@@ -8,34 +8,50 @@ import './showuserpg.css';
 // Add this helper function somewhere in your component file
 const formatTimeRemaining = (timeString) => {
   if (!timeString) return 'N/A';
-  
-  // Handle negative time (already passed)
+
   if (timeString.startsWith('-')) {
     return 'Journey Completed';
   }
 
-  // Handle positive time remaining
   try {
-    const parts = timeString.split(':');
+    // Example input: "3 days 15:59:33.682728" or "0 days 01:02:03"
+    let days = 0;
+    let timePart = timeString;
+
+    // Check if string contains 'days'
+    const dayMatch = timeString.match(/^(\d+)\s+days?\s+(.*)$/);
+    if (dayMatch) {
+      days = parseInt(dayMatch[1], 10);
+      timePart = dayMatch[2];
+    }
+
+    const parts = timePart.split(':');
     if (parts.length >= 3) {
       const hours = Math.abs(parseInt(parts[0]));
       const minutes = Math.abs(parseInt(parts[1]));
-      const seconds = Math.abs(parseFloat(parts[2]));
 
+      let result = '';
+      if (days > 0) {
+        result += `${days} day${days !== 1 ? 's' : ''} `;
+      }
       if (hours > 0) {
-        return `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+        result += `${hours} hour${hours !== 1 ? 's' : ''} `;
       }
       if (minutes > 0) {
-        return `${minutes} minute${minutes !== 1 ? 's' : ''} ${Math.round(seconds)} second${Math.round(seconds) !== 1 ? 's' : ''}`;
+        result += `${minutes} minute${minutes !== 1 ? 's' : ''} `;
       }
-      return `${Math.round(seconds)} second${Math.round(seconds) !== 1 ? 's' : ''}`;
+
+      return result.trim();
     }
-    return timeString; // fallback to original string if format is unexpected
+
+    return timeString || 'Invalid time format';
   } catch (e) {
     console.error('Error formatting time:', e);
-    return timeString; // fallback to original string if error occurs
+    return timeString;
   }
 };
+
+
 
 // Modal styles
 const customStyles = {
@@ -68,26 +84,34 @@ const shouldShowCancelButton = (timeRemaining) => {
     return false;
   }
 
-  // If it's already a number (hours remaining)
   if (typeof timeRemaining === 'number') {
     return timeRemaining >= 6; // 6 or more hours remaining
   }
 
-  // Handle string format if needed
   if (typeof timeRemaining === 'string') {
-    // Check if time is negative (already passed)
     if (timeRemaining.startsWith('-')) {
-      return false;
+      return false; // time passed
     }
 
     try {
-      // Format: "06:01:17.192553" (HH:MM:SS.microseconds)
-      const timeParts = timeRemaining.split(':');
+      let days = 0;
+      let timePart = timeRemaining;
+
+      // Extract days if present
+      const dayMatch = timeRemaining.match(/^(\d+)\s+days?\s+(.*)$/);
+      if (dayMatch) {
+        days = parseInt(dayMatch[1], 10);
+        timePart = dayMatch[2];
+      }
+
+      const timeParts = timePart.split(':');
       if (timeParts.length < 2) return false;
 
       const hours = parseInt(timeParts[0]) || 0;
       const minutes = parseInt(timeParts[1]) || 0;
-      return (hours * 60 + minutes) >= 360; // 6 hours in minutes
+
+      const totalMinutes = days * 24 * 60 + hours * 60 + minutes;
+      return totalMinutes >= 360; // 6 hours = 360 minutes
     } catch (e) {
       console.error('Error parsing time remaining:', e);
       return false;
@@ -96,6 +120,7 @@ const shouldShowCancelButton = (timeRemaining) => {
 
   return false;
 };
+
 
 const ShowUser = () => {
   const navigate = useNavigate();
@@ -579,22 +604,23 @@ const ShowUser = () => {
                     alignItems: 'center'
                   }}>
 <span>
-  {groupedSeats[date]?.[0] && (
-    <>
-      Journey Date: {new Date(date).toLocaleDateString()}
-      {groupedSeats[date][0].arrival_time &&
-        ` | Arrival Time: ${groupedSeats[date][0].arrival_time.substring(0, 8)}`}
-      {groupedSeats[date][0].total_cost !== undefined &&
-        ` | Total Cost: ৳${groupedSeats[date][0].total_cost}`}
-      {groupedSeats[date][0].time_remaining !== undefined &&
-        ` | Status: ${
-          groupedSeats[date][0].time_remaining.startsWith('-')
+  {groupedSeats[date]?.[0] && (() => {
+    const seat = groupedSeats[date][0];
+    return (
+      <>
+        Journey Date: {new Date(date).toLocaleDateString()}
+        {seat.arrival_time && ` | Arrival Time: ${seat.arrival_time.substring(0, 8)}`}
+        {seat.total_cost != null && ` | Total Cost: ৳${seat.total_cost}`}
+        {seat.time_remaining != null && ` | Status: ${
+          seat.time_remaining.startsWith('-')
             ? 'Journey Completed'
-            : `Departs in ${formatTimeRemaining(groupedSeats[date][0].time_remaining)}`
+            : `Departs in ${formatTimeRemaining(seat.time_remaining)}`
         }`}
-    </>
-  )}
+      </>
+    );
+  })()}
 </span>
+
 
 {shouldShowCancelButton(groupedSeats[date][0]?.time_remaining) && (
   <button
