@@ -1,4 +1,4 @@
-export const fetchWithAuth = async (url, options, navigate) => {
+export const fetchWithAuth = async (url, options = {}, navigate, logOut) => {
   const token = localStorage.getItem('token');
 
   const newOptions = {
@@ -13,9 +13,12 @@ export const fetchWithAuth = async (url, options, navigate) => {
   const response = await fetch(url, newOptions);
 
   if (response.status === 401) {
-    localStorage.removeItem('token');
-    // Assuming '/users/login' is your login route based on previous context
-    navigate('/users/login'); 
+    if (typeof logOut === 'function') {
+      logOut();
+    }
+    if (typeof navigate === 'function') {
+      navigate('/users/login');
+    }
     throw new Error('Unauthorized');
   }
 

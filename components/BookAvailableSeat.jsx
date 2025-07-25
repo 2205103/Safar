@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from './utils';
+import { useData } from './AppContext';
 
 const BookAvailableSeat = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logOut } = useData();
 
   const [trainCode, setTrainCode] = useState('');
   const [trainName, setTrainName] = useState('');
@@ -141,7 +143,7 @@ const BookAvailableSeat = () => {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(bookingBody),
-      }, navigate);
+      }, navigate, logOut);
 
       const responseJson = await res.json();
 
@@ -149,6 +151,7 @@ const BookAvailableSeat = () => {
         navigate('/booking/ticket', { state: { ticketId: responseJson.ticket_id } });
       } else if (res.status === 413) {
         alert('You have booked another ticket on this date, you cannot book another');
+        navigate('/booking/train/search');
       } else {
         alert(responseJson.message || 'Booking failed');
       }

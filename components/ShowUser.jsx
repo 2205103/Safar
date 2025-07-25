@@ -39,7 +39,7 @@ const isFutureDate = (inputDate) => {
 
 const ShowUser = () => {
   const navigate = useNavigate();
-  const { loginState, userId, setUserId, name, setName, setLoginState } = useData();
+  const { loginState, userId, setUserId, name, setName, setLoginState, logOut } = useData();
   const { id } = useParams();
 
   // User and ticket data states
@@ -67,6 +67,9 @@ const ShowUser = () => {
   const [cancelSuccessModal, setCancelSuccessModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [refundAmount, setRefundAmount] = useState(0);
+
+  // Logout confirmation state
+  const [logoutConfirmModal, setLogoutConfirmModal] = useState(false);
 
   useEffect(() => {
     if (!loginState || userId === null || userId.toString() !== id) {
@@ -169,16 +172,6 @@ const ShowUser = () => {
   };
 
   // Account functions
-  const logOut = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('name');
-    setName('');
-    setUserId('');
-    setLoginState(false);
-    navigate('/');
-  };
-
   const handleDeleteConfirmation = async () => {
     try {
       if (!deletePassword) {
@@ -451,7 +444,7 @@ const ShowUser = () => {
                 </button>
                 
                 <button 
-                  onClick={logOut}
+                  onClick={() => setLogoutConfirmModal(true)}
                   style={{
                     padding: '1rem 2rem',
                     border: 'none',
@@ -1027,6 +1020,89 @@ const ShowUser = () => {
             }}
           >
             Done
+          </button>
+        </div>
+      </Modal>
+
+      {/* Logout Confirmation Modal */}
+      <Modal 
+        isOpen={logoutConfirmModal} 
+        onRequestClose={() => setLogoutConfirmModal(false)} 
+        style={customStyles}
+      >
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{
+            fontSize: '1.5rem',
+            fontWeight: '600',
+            background: 'linear-gradient(135deg, #fd79a8, #e84393)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            marginBottom: '1rem',
+            textAlign: 'center'
+          }}>Confirm Logout</h2>
+          <button 
+            onClick={() => setLogoutConfirmModal(false)} 
+            style={{
+              position: 'absolute',
+              top: '1rem',
+              right: '1rem',
+              background: 'none',
+              border: 'none',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              color: '#fd79a8'
+            }}
+          >
+            &times;
+          </button>
+        </div>
+        
+        <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+          <p style={{ marginBottom: '1.5rem', color: '#333' }}>
+            Are you sure you want to log out?
+          </p>
+        </div>
+        
+        <div style={{
+          display: 'flex',
+          gap: '1rem',
+          justifyContent: 'center'
+        }}>
+          <button 
+            onClick={() => setLogoutConfirmModal(false)}
+            style={{
+              padding: '0.75rem 1.5rem',
+              border: 'none',
+              borderRadius: '8px',
+              background: '#6c757d',
+              color: 'white',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              minWidth: '120px'
+            }}
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={() => {
+              setLogoutConfirmModal(false);
+              logOut();
+            }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              border: 'none',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, #fd79a8, #e84393)',
+              color: 'white',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              minWidth: '120px'
+            }}
+          >
+            Log Out
           </button>
         </div>
       </Modal>

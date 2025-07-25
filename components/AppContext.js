@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AppContext = createContext();
 
@@ -13,21 +13,36 @@ export const AppProvider = ({ children }) => {
   const [dates, setDates] = useState(null);
   const [route, setRoute] = useState(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      const ID= localStorage.getItem("userId");
-      const NAME= localStorage.getItem("name");
-      setUserId(ID); 
-      setName(NAME); 
+      const ID = localStorage.getItem("userId");
+      const NAME = localStorage.getItem("name");
+      setUserId(ID);
+      setName(NAME);
       setLoginState(true);
+      setToken(storedToken);
     }
   }, []);
 
+  // ✅ Logout function shared via context
+  const logOut = () => {
+    setUserId(null);
+    setName(null);
+    setToken(null);
+    setLoginState(false);
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("name");
+    localStorage.removeItem("role");
+    navigate("/");
+  };
 
   return (
-    <AppContext.Provider value=
-    {{
+    <AppContext.Provider value={{
       userId,
       setUserId,
       token,
@@ -41,9 +56,10 @@ export const AppProvider = ({ children }) => {
       toStationSearch,
       setToStationSearch,
       dates,
-      setDates, 
+      setDates,
       route,
-      setRoute
+      setRoute,
+      logOut, // 👈 make logOut available
     }}>
       {children}
     </AppContext.Provider>

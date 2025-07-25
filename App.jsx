@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import HomePage from './routes/homepage';
 import About from './components/About.jsx';
 import LoginPage from './routes/loginPage';
@@ -22,6 +22,37 @@ import Footer from './components/Footer.jsx';
 import './components/App.css';
 import { AppProvider } from './components/AppContext';
 
+const AppContent = ({ isAuthenticated, name1, id1, setAuth }) => {
+  const location = useLocation();
+
+  return (
+    <>
+      <NavBar isAuthenticated={isAuthenticated} name1={name1} id1={id1} />
+      <div>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/trainInfo" element={<TrainInformation />} />
+          <Route path="/users/login" element={<LoginPage setAuth={setAuth} />} />
+          <Route path="/users/:id/update" element={<UpdateUserInfo />} />
+          <Route path="/users/:id" element={<ShowUserInfo />} />
+          <Route path="/users/:id/tickets" element={<TicketHistory />} />
+          <Route path="/users" element={<AddUserInfo />} />
+          <Route path="/search" element={<SearchUserInfo />} />
+          <Route path="/trains" element={<SearchTrainInfo />} />
+          <Route path="/train/:id" element={<RouteDetails />} />
+          <Route path="/booking/train/search" element={<BookTrain />} />
+          <Route path="/review" element={<ReviewPage />} />
+          <Route path="/bookseat" element={<BookSeat />} />
+          <Route path="/booking/ticket" element={<TicketBooking />} />
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </div>
+      <Footer/>
+    </>
+  );
+};
+
 const App = () => {
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [name1, setName1] = useState(null);
@@ -43,43 +74,10 @@ const App = () => {
     }
   }, []);
 
-  const AppContent = () => {
-    const location = useLocation();
-
-    return (
-      <>
-        <NavBar isAuthenticated={isAuthenticated} name1={name1} id1={id1} />
-        <div>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/trainInfo" element={<TrainInformation />} />
-            <Route path="/users/login" element={<LoginPage setAuth={setAuth} />} />
-            <Route path="/users/:id/update" element={<UpdateUserInfo />} />
-            <Route path="/users/:id" element={<ShowUserInfo />} />
-            <Route path="/users/:id/tickets" element={<TicketHistory />} />
-            <Route path="/users" element={<AddUserInfo />} />
-            <Route path="/search" element={<SearchUserInfo />} />
-            <Route path="/trains" element={<SearchTrainInfo />} />
-            <Route path="/train/:id" element={<RouteDetails />} />
-            <Route path="/booking/train/search" element={<BookTrain />} />
-            <Route path="/review" element={<ReviewPage />} />
-            <Route path="/bookseat" element={<BookSeat />} />
-            <Route path="/booking/ticket" element={<TicketBooking />} />
-            <Route path="/admin" element={<AdminPage />} />
-          </Routes>
-        </div>
-        <Footer/>
-      </>
-    );
-  };
-
   return (
     <div className="App">
       <AppProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <AppContent isAuthenticated={isAuthenticated} name1={name1} id1={id1} setAuth={setAuth} />
       </AppProvider>
     </div>
   );
