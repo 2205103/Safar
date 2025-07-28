@@ -18,8 +18,8 @@ import AdminPage from './routes/adminPage';
 import TrainInformation from './routes/trainInfo';
 
 import NavBar from './components/NavBar';
-import Footer from './components/Footer.jsx';
 import './components/App.css';
+import Footer from './components/Footer.jsx';
 import { AppProvider } from './components/AppContext';
 
 const AppContent = ({ isAuthenticated, name1, id1, setAuth }) => {
