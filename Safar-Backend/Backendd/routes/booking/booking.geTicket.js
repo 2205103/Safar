@@ -33,16 +33,22 @@ router.post('/', checkToken, async (req, res) => {
         c.class_name, 
         s_from.station_name AS from_station_name, 
         s_to.station_name AS to_station_name, 
+        tt.arrival_time,
         seat_number
       FROM seat_reservation sr
       JOIN train t ON t.train_code = sr.train_code
       JOIN class c ON c.class_code = sr.class_code
       JOIN station s_from ON s_from.station_id = sr.from_station::int
       JOIN station s_to ON s_to.station_id = sr.to_station::int
-      WHERE ticket_id = $1;
+      JOIN time_table tt ON tt.train_code = sr.train_code AND tt.station_id = sr.from_station::int
+      WHERE sr.ticket_id = $1;
     `, [ticket_id]);
 
-    const { date, train_code, train_name, from_station_name, to_station_name } = result.rows[0];
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Ticket details not found' });
+    }
+
+    const { date, train_code, train_name, from_station_name, to_station_name, arrival_time } = result.rows[0];
 
     const groupedData = {};
 
@@ -64,7 +70,8 @@ router.post('/', checkToken, async (req, res) => {
       train_name: train_name,
       From: from_station_name,
       To: to_station_name,
-      Journey_date: date,  // <-- directly use the string date here
+      Journey_date: date,  // string date
+      arrival_time: arrival_time, // newly added field
       Seat_details: Object.values(groupedData),
       total_cost: total_cost
     });
