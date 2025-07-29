@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from './utils';
 import { useData } from './AppContext';
+import Popup from './Popup';
 
 const BookAvailableSeat = () => {
   const location = useLocation();
@@ -18,6 +19,8 @@ const BookAvailableSeat = () => {
   const [unavailableSeats, setUnavailableSeats] = useState([]);
   const [availableSeatArr, setAvailableSeatArr] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [popup, setPopup] = useState({ show: false, message: '' });
+  const [popupCallback, setPopupCallback] = useState(null);
 
   const [seatCost, setSeatCost] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -78,11 +81,11 @@ const BookAvailableSeat = () => {
 
       if (response.ok && data.data && data.data.length > 0) {
         const train = data.data.find(t => String(t.train_code) === String(tCode));
-        if (!train) return alert('Train not found');
+        if (!train) return setPopup({ show: true, message: 'Train not found' });
 
         setTrainName(train.train_name);
         const cls = train.classes.find(c => c.class_name === cName);
-        if (!cls) return alert('Class not found');
+        if (!cls) return setPopup({ show: true, message: 'Class not found' });
 
         setTotalSeat(cls.total_seat);
         const bookedSeats = cls.Booked_Seats || [];
@@ -95,11 +98,11 @@ const BookAvailableSeat = () => {
         }
         setAvailableSeatArr(availableSeats);
       } else {
-        alert('Failed to get seat data');
+        setPopup({ show: true, message: 'Failed to get seat data' });
       }
     } catch (err) {
       console.error('Error fetching seat data:', err);
-      alert('Error fetching seat data');
+      setPopup({ show: true, message: 'Error fetching seat data' });
     }
   };
 
@@ -109,7 +112,7 @@ const BookAvailableSeat = () => {
         return prev.filter(s => s !== seatNum);
       } else {
         if (prev.length >= 4) {
-          alert('You can select up to 4 seats only.');
+          setPopup({ show: true, message: 'You can select up to 4 seats only.' });
           return prev;
         }
         return [...prev, seatNum].sort((a, b) => a - b);
@@ -119,7 +122,7 @@ const BookAvailableSeat = () => {
 
   const handleBooking = async () => {
     if (selectedSeats.length === 0) {
-      alert('Please select at least one seat.');
+      setPopup({ show: true, message: 'Please select at least one seat.' });
       return;
     }
 
@@ -150,14 +153,14 @@ const BookAvailableSeat = () => {
       if (res.ok) {
         navigate('/booking/ticket', { state: { ticketId: responseJson.ticket_id } });
       } else if (res.status === 413) {
-        alert('You have booked another ticket on this date, you cannot book another');
-        navigate('/booking/train/search');
+        setPopup({ show: true, message: 'You have booked another ticket on this date, you cannot book another' });
+        setPopupCallback(() => () => navigate('/booking/train/search'));
       } else {
-        alert(responseJson.message || 'Booking failed');
+        setPopup({ show: true, message: responseJson.message || 'Booking failed' });
       }
     } catch (error) {
       console.error('Booking error:', error);
-      //alert('Booking failed due to network error');
+      setPopup({ show: true, message: error.message || 'Booking failed due to network error' });
     }
   };
 
@@ -525,6 +528,7 @@ const BookAvailableSeat = () => {
           }
         }
       `}</style>
+      {popup.show && <Popup message={popup.message} onClose={() => { setPopup({ show: false, message: '' }); if (popupCallback) { popupCallback(); setPopupCallback(null); } }} />}
     </div>
   );
 };

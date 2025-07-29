@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from './utils';
+import Popup from './Popup';
 
 import Modal from 'react-modal';
 import ErrorModal from './ErrorModal';
@@ -52,6 +53,7 @@ const Admin = () => {
   const [routeName, setRouteName] = useState('');
   const [message, setMessage] = useState('');
   const [existRoute, setExistRoute] = useState(false);
+  const [popup, setPopup] = useState({ show: false, message: '' });
 
   const [selectedSuggestionFrom, setSelectedSuggestionFrom] = useState(null);
 
@@ -146,7 +148,7 @@ const Admin = () => {
 
     // If duplicates are found, display an alert and return without sending data to the endpoint
     if (duplicateStationNames.length > 0 || duplicateClassNames.length > 0) {
-      alert("Duplicate/Empty station or class names found. Please fix them before adding the train.");
+      setPopup({ show: true, message: "Duplicate/Empty station or class names found. Please fix them before adding the train." });
       return;
     }
 
@@ -185,7 +187,7 @@ const Admin = () => {
       }, navigate)
       console.log("////////////result : " + JSON.stringify(result));
       if (result.status === 200)
-        alert("Train added successfully");
+        setPopup({ show: true, message: "Train added successfully" });
     } catch (error) {
       console.error(error);
     }
@@ -322,6 +324,7 @@ const Admin = () => {
       <button onClick={closeModal1} style={{ marginLeft: '20px' }}> Close</button>
     </Modal>
 
+    {popup.show && <Popup message={popup.message} onClose={() => setPopup({ show: false, message: '' })} />}
     {message && <ErrorModal isOpen={!!message} errorMessage={message} closeModal={closeMessage} />}
   </Fragment>
 }

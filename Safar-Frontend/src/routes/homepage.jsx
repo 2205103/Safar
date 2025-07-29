@@ -3,11 +3,13 @@ import { FiArrowRight } from "react-icons/fi";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import '../components/home.css';
+import Popup from '../components/Popup';
 
 const Homepage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [popup, setPopup] = useState({ show: false, message: '' });
 
   const handleBookNowClick = async () => {
     try {
@@ -19,7 +21,7 @@ const Homepage = () => {
       navigate('/booking/train/search');
     } catch (error) {
       console.error('Error fetching stations:', error);
-      alert('Unable to fetch stations. Please try again later.');
+      setPopup({ show: true, message: 'Unable to fetch stations. Please try again later.' });
     }
   };
 
@@ -641,6 +643,7 @@ const Homepage = () => {
           }
         }
       `}</style>
+      {popup.show && <Popup message={popup.message} onClose={() => setPopup({ show: false, message: '' })} />}
     </>
   );
 }

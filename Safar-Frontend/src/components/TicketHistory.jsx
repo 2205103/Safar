@@ -7,6 +7,7 @@ import './comp.css'
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { Link, json } from 'react-router-dom';
 import { MdOutlineCancel } from "react-icons/md";
+import Popup from './Popup';
 // import './history.css';
 
 
@@ -90,6 +91,7 @@ const TicketHistory = () => {
     const [expandedTransactions, setExpandedTransactions] = useState({});
     const [trainName, setTrainName] = useState('');
     const [className, setClassName] = useState('');
+    const [popup, setPopup] = useState({ show: false, message: '' });
     // const [refund_status, setRefund_status] = useState('');
     const toggleDropdown = (transactionId) => {
         setExpandedTransactions(prev => ({
@@ -185,10 +187,10 @@ const TicketHistory = () => {
                 console.log("data", data);
                 // setRefund_status(data.message);
                 if (response.status === 200) {
-                    alert(data.message);
+                    setPopup({ show: true, message: data.message });
                 }
                 else if (response.status === 400) {
-                    alert(data.message);
+                    setPopup({ show: true, message: data.message });
                 }
                 console.log("data", data);
             } catch (error) {
@@ -226,7 +228,7 @@ const TicketHistory = () => {
             if (response.status === 400) {
                 console.log("haha")
 
-                alert("Transaction id already in use");
+                setPopup({ show: true, message: "Transaction id already in use" });
             }
             else {
                 window.location.reload();
@@ -493,7 +495,7 @@ const TicketHistory = () => {
                 <button className='button' onClick={closeModal} style={{ marginTop: '5px' }}>Confirm</button>
             </Modal>
 
-
+            {popup.show && <Popup message={popup.message} onClose={() => setPopup({ show: false, message: '' })} />}
         </Fragment>
     );
 

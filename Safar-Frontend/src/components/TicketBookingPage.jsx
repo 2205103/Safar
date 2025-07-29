@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
+import Popup from './Popup';
 
 const customStyles = {
   content: {
@@ -37,6 +38,7 @@ const TicketBookingPage = () => {
 
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
   const timerRef = useRef(null);
+  const [popup, setPopup] = useState({ show: false, message: '' });
 
   // Fetch ticket details
   useEffect(() => {
@@ -114,17 +116,17 @@ const TicketBookingPage = () => {
         throw new Error(data.message || 'Auto cancellation failed');
       }
 
-      alert('Time expired! Ticket was automatically canceled.');
+      setPopup({ show: true, message: 'Time expired! Ticket was automatically canceled.' });
       navigate('/');
     } catch (err) {
-      alert(`Error auto-canceling ticket: ${err.message}`);
+      setPopup({ show: true, message: `Error auto-canceling ticket: ${err.message}` });
       navigate('/');
     }
   };
 
   const openModal = () => {
     if (!paymentMethod) {
-      alert('Please select a payment method first.');
+      setPopup({ show: true, message: 'Please select a payment method first.' });
       return;
     }
     setModalIsOpen(true);
@@ -136,17 +138,17 @@ const TicketBookingPage = () => {
 
   const handleConfirmPayment = () => {
     if (!transactionId.trim()) {
-      alert('Please enter Amount');
+      setPopup({ show: true, message: 'Please enter Amount' });
       return;
     }
     else if (transactionId.trim() !== ticketData.total_cost.toString()) {
-      alert(`Amount must match the total cost of ${ticketData.total_cost} tk.`);
+      setPopup({ show: true, message: `Amount must match the total cost of ${ticketData.total_cost} tk.` });
       return;
     }
 
     clearInterval(timerRef.current);
 
-    alert(`Payment confirmed!\nPayment method: ${paymentMethod}\nTransaction Amount: ${transactionId}`);
+    setPopup({ show: true, message: `Payment confirmed!\nPayment method: ${paymentMethod}\nTransaction Amount: ${transactionId}` });
     closeModal();
     navigate('/');
   };
@@ -171,7 +173,7 @@ const TicketBookingPage = () => {
       setCancelSuccess('Ticket canceled successfully!');
       setTimeout(() => navigate('/'), 1500);
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      setPopup({ show: true, message: `Error: ${err.message}` });
     }
   };
 
@@ -755,6 +757,7 @@ const TicketBookingPage = () => {
           }
         }
       `}</style>
+      {popup.show && <Popup message={popup.message} onClose={() => setPopup({ show: false, message: '' })} />}
     </div>
   );
 };

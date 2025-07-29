@@ -104,7 +104,15 @@ const SearchTravel = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '2rem',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      backgroundSize: 'cover',
+      backgroundAttachment: 'fixed',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      overflowY: 'auto'
     }}>
       <div className="search-card" style={{
         background: 'rgba(255, 255, 255, 0.1)',
@@ -115,7 +123,8 @@ const SearchTravel = () => {
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
         transition: 'all 0.3s ease',
         width: '100%',
-        maxWidth: '500px'
+        maxWidth: '500px',
+        zIndex: 1
       }}>
         <div className="form-group" style={{ marginBottom: '1.5rem' }}>
           <label className="form-label" style={{
@@ -193,26 +202,33 @@ const SearchTravel = () => {
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>Pick Date:</label>
-          <DatePicker
-            className="form-control"
-            style={{
-              width: '100%',
-              padding: '1rem 1.25rem',
-              background: 'rgba(83, 69, 143, 0.9)',
-              border: '2px solid rgba(83, 69, 143, 0.9)',
-              borderRadius: '16px',
-              color: 'white',
-              fontSize: '1rem',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)'
-            }}
-            placeholderText="Date of Journey"
-            selected={dateSearched}
-            onChange={setDate}
-            dateFormat="yyyy-MM-dd"
-            minDate={new Date()}
-            maxDate={new Date(new Date().setDate(new Date().getDate() + 9))}
-          />
+          <div style={{
+            width: '100%',
+            borderRadius: '16px',
+            overflow: 'hidden'
+          }}>
+            <DatePicker
+              wrapperClassName="datePicker"
+              placeholderText="Date of Journey"
+              selected={dateSearched}
+              onChange={setDate}
+              dateFormat="yyyy-MM-dd"
+              minDate={new Date()}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 9))}
+              className="form-control"
+              style={{
+                width: '100%',
+                padding: '1rem 1.25rem',
+                background: 'rgba(83, 69, 143, 0.9)',
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '16px',
+                color: 'white',
+                fontSize: '1rem',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)'
+              }}
+            />
+          </div>
         </div>
 
         <button 
@@ -240,12 +256,17 @@ const SearchTravel = () => {
       </div>
 
       {searchClicked && trains.length === 0 && (
-        <div className="not-found" style={{ marginTop: '2rem', color: 'white' }}>
+        <div className="not-found" style={{ marginTop: '2rem', color: 'white', zIndex: 1 }}>
           <h5>No trains found!</h5>
         </div>
       )}
 
-      <div className="train-container" style={{ marginTop: '2rem', width: '100%', maxWidth: '800px' }}>
+      <div className="train-container" style={{ 
+        marginTop: '2rem', 
+        width: '100%', 
+        maxWidth: '800px',
+        zIndex: 1 
+      }}>
         {trains.map((train, idx) => (
           <div
             key={idx}
