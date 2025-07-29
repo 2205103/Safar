@@ -7,6 +7,7 @@ router.post('/', checkToken, async (req, res) => {
   const { ticket_id } = req.body;
 
   if (!ticket_id) {
+    console.log('ticket_id is required');
     return res.status(400).json({ error: 'ticket_id is required' });
   }
 
@@ -51,6 +52,7 @@ router.post('/', checkToken, async (req, res) => {
       refundAmount = total_cost - Math.max(40, total_cost * 0.75);
       message = '75% deduction (min BDT 40)';
     } else {
+      console.log('Cancellation within 6 hours of departure is not allowed');
       return res.status(400).json({
         error: 'No refund if cancelled within 6 hours of departure',
         refund_amount: 0

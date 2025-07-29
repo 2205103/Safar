@@ -249,6 +249,8 @@ const ShowUser = () => {
     } finally {
       setLoadingTickets(false);
     }
+
+    localStorage.setItem('FIRST_NAME', JSON.stringify(userData.first_name));
   };
 
   return (

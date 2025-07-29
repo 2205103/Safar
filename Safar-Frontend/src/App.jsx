@@ -19,7 +19,7 @@ import TrainInformation from './routes/trainInfo';
 
 import NavBar from './components/NavBar';
 import './components/App.css';
-import Footer from './components/Footer.jsx';
+//import Footer from './components/Footer.jsx';
 import { AppProvider } from './components/AppContext';
 
 const AppContent = ({ isAuthenticated, name1, id1, setAuth }) => {
@@ -48,7 +48,7 @@ const AppContent = ({ isAuthenticated, name1, id1, setAuth }) => {
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </div>
-      <Footer/>
+      {/* <Footer/> */}
     </>
   );
 };

@@ -157,7 +157,7 @@ const BookAvailableSeat = () => {
       }
     } catch (error) {
       console.error('Booking error:', error);
-      //alert('Booking failed due to network error');
+      alert('Booking failed due to network error');
     }
   };
 
