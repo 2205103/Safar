@@ -36,7 +36,7 @@ const TicketBookingPage = () => {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelSuccess, setCancelSuccess] = useState('');
 
-  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
   const timerRef = useRef(null);
   const [popup, setPopup] = useState({ show: false, message: '' });
 
