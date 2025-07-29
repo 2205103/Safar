@@ -1,0 +1,32 @@
+
+
+.ticket-details-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .ticket-details-list li {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+  
+  .ticket-details-list li p {
+    margin: 5px 0;
+  }
+  
+  .ticket-details-list li button {
+    margin-top: 10px;
+  }
+  
+  .payButton {
+    background-color: rgb(9, 64, 9);
+    border-radius: 5px;
+    color: white; 
+  }
+  
+  .payButton:hover {
+    background-color: rgb(20, 104, 20);
+  }
+  

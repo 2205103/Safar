@@ -1,0 +1,56 @@
+.user-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 500px;
+  }
+  
+  .user-details p {
+    margin: 5px 0;
+  }
+  
+  .btn-warning {
+    background-color: #f0ad4e;
+    border-color: #f0ad4e;
+  }
+  
+  .btn-danger {
+    background-color: #d9534f;
+    border-color: #d9534f;
+  }
+  
+  .modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .close {
+    float: right;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+  }
+  
+  .close:hover {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+  }
+
+
+
+  .user-information,
+  .ticket-history {
+    transition: all 0.3s ease;
+    transform: translateX(0);
+  }
+  
+  .clicked {
+    transform: translateX(-50%);
+  }  
+  

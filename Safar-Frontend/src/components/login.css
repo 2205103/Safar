@@ -1,0 +1,57 @@
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-form {
+    max-width: 300px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .signup-message {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .btn-primary {
+    background-color: lightgreen; /* Light green color for the "Submit" button */
+    border-color: lightgreen;
+    color: #333; /* Adjust text color as needed */
+  }
+  
+  .btn-primary:hover {
+    background-color: #9fdf9f; /* Lighter green on hover */
+    border-color: #9fdf9f;
+    color: #333; /* Adjust text color as needed */
+  }
+  
+  .btn-secondary {
+    background-color: lightcoral;
+    border-color: lightcoral;
+    color: #fff; /* White text color on the "Sign Up" button */
+  }
+  
+  .btn-secondary:hover {
+    background-color: #ff6666; /* Lighter red on hover */
+    border-color: #ff6666;
+    color: #fff; /* White text color on hover */
+  }
+  
+  .header {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 200px; 
+}
+
+.logo-container {
+    text-align: center; 
+    margin-top: 190px;
+}
+
+.logo {
+    width: 180px;
+    height: 100px;
+}
