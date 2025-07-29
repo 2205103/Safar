@@ -220,9 +220,12 @@ const ShowUser = () => {
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.message || 'Cancellation failed');
+        const errorMessage = await response.json();
+        setErrMessage(errorMessage.error);
+        setErrorModalIsOpen(true);
+        return;
       }
+
 
       const result = await response.json();
       const refund = result.refund_amount;
@@ -249,8 +252,6 @@ const ShowUser = () => {
     } finally {
       setLoadingTickets(false);
     }
-
-    localStorage.setItem('FIRST_NAME', JSON.stringify(userData.first_name));
   };
 
   return (
