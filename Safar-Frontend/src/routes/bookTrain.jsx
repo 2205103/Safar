@@ -11,12 +11,6 @@ const bookTrain = () => {
       </h1></center> */}
       
       <SearchTravel />
-      <div className="home-banner-container">
-      
-       <div className="home-bannerImage-container">
-          <img src='home-banner-background.png' alt="" />
-      </div>
-      </div>
     </div>
   )
 }
