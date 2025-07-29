@@ -4,6 +4,9 @@ const checkToken = async (req, res, next) => {
     const { authorization } = req.headers;
 
     try {
+        if (!authorization || !authorization.startsWith('Bearer ')) {
+            return res.status(401).json({ error: "Authorization header is missing or invalid." });
+        }
         const token = authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.jwt_secret);
         const user_id = decoded.user_id;

@@ -42,8 +42,8 @@ function AddUser() {
     
     if (!formData.phone_number.trim()) {
       newErrors.phone_number = 'Mobile number is required';
-    } else if (!/^\d{10,15}$/.test(formData.phone_number.replace(/\s+/g, ''))) {
-      newErrors.phone_number = 'Please enter a valid mobile number';
+    } else if (!/^\d{11}$/.test(formData.phone_number.replace(/\s+/g, ''))) {
+      newErrors.phone_number = 'Mobile number must be exactly 11 digits';
     }
     
     if (!formData.username.trim()) {
@@ -118,14 +118,14 @@ function AddUser() {
     }
   }, [showMessage]);
 
-return (
+  return (
     <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #0e360e 0%, #166534 50%, #22c55e 100%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '6rem 1rem 2rem 1rem', // Added top padding for navbar
+      padding: '6rem 1rem 2rem 1rem',
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
       
@@ -138,7 +138,7 @@ return (
         animation: 'float 6s ease-in-out infinite'
       }}></div>
 
-      {/* Main Form Container - moved down with transform */}
+      {/* Main Form Container */}
       <div style={{
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
@@ -150,7 +150,7 @@ return (
         position: 'relative',
         zIndex: 1,
         animation: 'slideUp 0.8s ease-out',
-        marginTop: '30px' // Added margin to push it below navbar
+        marginTop: '30px'
       }}>
         
         {/* Header */}
@@ -249,6 +249,7 @@ return (
               name="phone_number"
               value={formData.phone_number}
               onChange={handleChange}
+              maxLength="11"
               style={{
                 width: '100%',
                 padding: '0.8rem 1rem',
@@ -267,7 +268,7 @@ return (
                 e.target.style.borderColor = errors.phone_number ? '#ef4444' : '#e5e7eb';
                 e.target.style.boxShadow = 'none';
               }}
-              placeholder="Enter your mobile number"
+              placeholder="Enter your 11-digit mobile number"
             />
             {errors.phone_number && (
               <p style={{
